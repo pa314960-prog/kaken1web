@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hand Gesture Effects</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="stage">
+    <video id="webcam" autoplay playsinline muted></video>
+    <canvas id="fx" class="layer"></canvas>
+    <canvas id="three-layer" class="layer"></canvas>
+    <div id="hud">
+      <div id="gesture-label">ジェスチャー: -</div>
+      <div id="effect-label">エフェクト: -</div>
+    </div>
+    <div id="start-overlay">
+      <button id="start-btn">カメラを開始</button>
+      <p class="hint">ブラウザからカメラの使用を許可してください。</p>
+    </div>
+  </div>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
