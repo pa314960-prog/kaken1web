@@ -8,6 +8,38 @@ Webカメラの映像から手のジェスチャーを認識し、ジェスチ�
 - Google Chrome または Microsoft Edge（最新版を推奨）
 - インターネット接続（初回読み込み時のみ）
 
+## プロジェクトの入手方法・更新方法
+
+### 方法A: ZIPでダウンロードする（Gitを使わない場合）
+
+1. ブラウザで対象ブランチのページを開く
+   ```
+   https://github.com/pa314960-prog/kaken1web/tree/claude/hand-gesture-effects-glik5u
+   ```
+2. 緑色の「Code」ボタン → 「Download ZIP」をクリック
+3. ダウンロードしたZIPファイルを展開する
+4. 展開してできたフォルダをそのまま使う（フォルダ名は `kaken1web` にリネームすると分かりやすい）
+
+**更新されたときは、この手順をもう一度やり直して古いフォルダと入れ替える必要があります。** ZIPでダウンロードしたフォルダはGitHub上の変更と自動では連動しません。
+
+### 方法B: git cloneする（Gitが使える場合、更新が楽）
+
+1. PowerShell（Windows）またはターミナル（Mac）を開く
+2. フォルダを置きたい場所に移動する（例: デスクトップ）
+   ```
+   cd Desktop
+   ```
+3. 次のコマンドでクローンする
+   ```
+   git clone -b claude/hand-gesture-effects-glik5u https://github.com/pa314960-prog/kaken1web.git
+   ```
+4. `kaken1web` フォルダが作成される
+
+**更新されたときは、`kaken1web` フォルダの中で次のコマンドを実行するだけで最新版になります（再ダウンロード不要）。**
+```
+git pull origin claude/hand-gesture-effects-glik5u
+```
+
 ---
 
 ## セットアップ手順（Windows）
