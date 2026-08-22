@@ -39,7 +39,11 @@ function computeOrigin(gesture, hands) {
 }
 
 function updateGesture(rawGesture, hands) {
-  if (rawGesture === candidateGesture) {
+  if (hands.length === 0) {
+    candidateGesture = "none";
+    candidateCount = STABLE_FRAMES_REQUIRED;
+    stableGesture = "none";
+  } else if (rawGesture === candidateGesture) {
     candidateCount++;
   } else {
     candidateGesture = rawGesture;
@@ -89,10 +93,15 @@ function runLoop(landmarker) {
     lastTime = now;
 
     if (video.readyState >= 2) {
-      const result = landmarker.detectForVideo(video, now);
-      const hands = (result.landmarks || []).map((lm) => analyzeHand(lm));
-      const combined = classifyCombinedGesture(hands);
-      updateGesture(combined.gesture, hands);
+      try {
+        const result = landmarker.detectForVideo(video, now);
+        const hands = (result.landmarks || []).map((lm) => analyzeHand(lm));
+        const combined = classifyCombinedGesture(hands);
+        updateGesture(combined.gesture, hands);
+      } catch (err) {
+        console.error("hand detection failed on this frame", err);
+        updateGesture("none", []);
+      }
     }
 
     effectManager.update(dt);
