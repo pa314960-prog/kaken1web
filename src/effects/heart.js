@@ -1,4 +1,5 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
+import { easeOutBack, rand } from "./utils.js";
 
 function buildHeartGeometry() {
   const shape = new THREE.Shape();
@@ -76,13 +77,20 @@ export class HeartEffect {
   onHold(dt, originX, originY) {
     this.spawnTimer -= dt;
     if (this.spawnTimer <= 0) {
-      this.spawnTimer = 0.5;
+      this.spawnTimer = 0.28;
       const pos = this.screenToWorld(originX, originY);
+      const scale = 0.55 + Math.random() * 0.55;
       const mesh = new THREE.Mesh(this.geometry, this.material.clone());
       mesh.position.set(pos.x, pos.y, 0);
       mesh.scale.setScalar(0.001);
       mesh.rotation.y = Math.random() * 0.4 - 0.2;
-      mesh.userData = { life: 0, maxLife: 3.2, driftX: (Math.random() - 0.5) * 0.6 };
+      mesh.userData = {
+        life: 0,
+        maxLife: rand(2.2, 3),
+        driftX: (Math.random() - 0.5) * 0.9,
+        baseScale: scale,
+        wobbleSeed: Math.random() * Math.PI * 2
+      };
       this.scene.add(mesh);
       this.hearts.push(mesh);
     }
@@ -92,12 +100,16 @@ export class HeartEffect {
     for (const h of this.hearts) {
       h.userData.life += dt;
       const t = h.userData.life / h.userData.maxLife;
-      const growT = Math.min(1, h.userData.life / 0.5);
-      h.scale.setScalar(0.001 + growT * 0.85);
-      h.position.y += dt * (0.5 + t * 1.2);
-      h.position.x += h.userData.driftX * dt;
-      h.rotation.y += dt * 0.4;
-      h.material.opacity = t < 0.6 ? 1 : Math.max(0, 1 - (t - 0.6) / 0.4);
+      const growT = Math.min(1, h.userData.life / 0.32);
+      const eased = easeOutBack(growT);
+      h.scale.setScalar(0.001 + eased * h.userData.baseScale);
+      h.position.y += dt * (1.1 + t * 2.4);
+      h.position.x += h.userData.driftX * dt + Math.sin(h.userData.life * 3 + h.userData.wobbleSeed) * 0.15 * dt;
+      h.rotation.y = Math.sin(h.userData.life * 2 + h.userData.wobbleSeed) * 0.35;
+      h.rotation.z = Math.sin(h.userData.life * 1.5 + h.userData.wobbleSeed) * 0.12;
+      h.material.opacity = t < 0.55 ? 1 : Math.max(0, 1 - (t - 0.55) / 0.45);
+      const pulse = 0.15 + Math.abs(Math.sin(h.userData.life * 6)) * 0.25;
+      h.material.emissive.setRGB(pulse, 0, pulse * 0.15);
     }
     this.hearts = this.hearts.filter((h) => {
       const alive = h.userData.life < h.userData.maxLife;

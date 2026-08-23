@@ -1,27 +1,31 @@
-import { rand, pick } from "./utils.js";
-
-const COLORS = ["#ff2d6b", "#2dd4ff", "#ffe32d", "#7c2dff", "#2dff8f"];
+import { rand } from "./utils.js";
 
 export class Lasers {
   constructor() {
     this.beams = [];
     this.spawnTimer = 0;
+    this.hue = 0;
   }
 
   onHold(dt, width, height) {
+    this.hue = (this.hue + dt * 60) % 360;
     this.spawnTimer -= dt;
     if (this.spawnTimer <= 0) {
-      this.spawnTimer = 0.06;
-      const fromLeft = Math.random() < 0.5;
+      this.spawnTimer = 0.045;
+      const originX = width / 2 + rand(-40, 40);
+      const originY = height + 20;
+      const angle = rand(-1.15, -Math.PI + 1.15) - Math.PI / 2;
+      const length = Math.max(width, height) * 1.4;
       this.beams.push({
-        x: fromLeft ? -50 : width + 50,
-        y: rand(0, height),
-        vx: (fromLeft ? 1 : -1) * rand(900, 1400),
-        angle: rand(-0.3, 0.3),
-        width: rand(3, 7),
-        color: pick(COLORS),
+        x: originX,
+        y: originY,
+        ex: originX + Math.cos(angle) * length,
+        ey: originY + Math.sin(angle) * length,
+        width: rand(3, 8),
+        hue: (this.hue + rand(-30, 30) + 360) % 360,
         life: 0,
-        maxLife: 0.5
+        maxLife: rand(0.35, 0.6),
+        sweep: rand(0.3, 0.9)
       });
     }
   }
@@ -29,29 +33,37 @@ export class Lasers {
   update(dt) {
     for (const b of this.beams) {
       b.life += dt;
-      b.x += b.vx * dt;
-      b.y += b.vx * dt * b.angle * 0.3;
     }
     this.beams = this.beams.filter((b) => b.life < b.maxLife);
   }
 
   draw(ctx, width, height) {
     ctx.save();
-    ctx.fillStyle = "rgba(10, 0, 20, 0.18)";
+    ctx.fillStyle = "rgba(6, 0, 16, 0.22)";
     ctx.fillRect(0, 0, width, height);
     ctx.restore();
 
     for (const b of this.beams) {
-      const alpha = 1 - b.life / b.maxLife;
+      const t = b.life / b.maxLife;
+      const alpha = t < 0.15 ? t / 0.15 : 1 - (t - 0.15) / 0.85;
+      const color = `hsl(${b.hue}, 100%, 60%)`;
+      const currentEx = b.x + (b.ex - b.x) * Math.min(1, t / b.sweep + 0.3);
+      const currentEy = b.y + (b.ey - b.y) * Math.min(1, t / b.sweep + 0.3);
+
       ctx.save();
-      ctx.globalAlpha = Math.max(0, alpha);
-      ctx.shadowColor = b.color;
-      ctx.shadowBlur = 20;
-      ctx.strokeStyle = b.color;
+      ctx.globalAlpha = Math.max(0, alpha) * 0.9;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 26;
+      ctx.strokeStyle = color;
       ctx.lineWidth = b.width;
+      ctx.lineCap = "round";
       ctx.beginPath();
       ctx.moveTo(b.x, b.y);
-      ctx.lineTo(b.x - b.vx * 0.05, b.y - b.vx * 0.05 * b.angle * 0.3);
+      ctx.lineTo(currentEx, currentEy);
+      ctx.stroke();
+
+      ctx.globalAlpha = Math.max(0, alpha) * 0.5;
+      ctx.lineWidth = b.width * 2.4;
       ctx.stroke();
       ctx.restore();
     }

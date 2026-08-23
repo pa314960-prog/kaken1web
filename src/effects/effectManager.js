@@ -88,8 +88,9 @@ export class EffectManager {
     if (g === "rock") this.lasers.onHold(dt, this.width, this.height);
     if (g === "heart") this.heart.onHold(dt, o.x, o.y);
 
-    const targetDim = DIM_GESTURES.has(g) ? (g === "goodTwo" ? 0.55 : 0.35) : 0;
-    this.dimAlpha += (targetDim - this.dimAlpha) * Math.min(1, dt * 3);
+    const targetDim = DIM_GESTURES.has(g) ? (g === "goodTwo" ? 0.55 : 0.4) : 0;
+    const dimRate = targetDim > this.dimAlpha ? 5 : 1.5;
+    this.dimAlpha += (targetDim - this.dimAlpha) * Math.min(1, dt * dimRate);
 
     this.balloons.update(dt);
     this.confetti.update(dt);

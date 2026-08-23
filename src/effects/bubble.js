@@ -1,3 +1,5 @@
+import { easeOutBack } from "./utils.js";
+
 export class ReactionBubble {
   constructor(emoji, color) {
     this.emoji = emoji;
@@ -18,9 +20,10 @@ export class ReactionBubble {
   draw(ctx) {
     for (const it of this.items) {
       const t = it.life / it.maxLife;
-      const rise = t * 90;
-      const alpha = t < 0.15 ? t / 0.15 : 1 - (t - 0.15) / 0.85;
-      const scale = t < 0.2 ? 0.6 + (t / 0.2) * 0.5 : 1.1 - (t - 0.2) * 0.1;
+      const rise = t * 100;
+      const alpha = t < 0.12 ? t / 0.12 : 1 - (t - 0.12) / 0.88;
+      const popT = Math.min(1, t / 0.28);
+      const scale = t < 0.28 ? easeOutBack(popT) : 1 + (t - 0.28) * 0.06;
 
       ctx.save();
       ctx.globalAlpha = Math.max(0, alpha);

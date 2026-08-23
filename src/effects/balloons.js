@@ -1,6 +1,6 @@
-import { rand, pick } from "./utils.js";
+import { rand, pick, easeOutBack } from "./utils.js";
 
-const COLORS = ["#ff6b6b", "#ffd93d", "#6bcB77", "#4d96ff", "#ff8fab", "#b385ff"];
+const COLORS = ["#ff6b6b", "#ffd93d", "#6bcB77", "#4d96ff", "#ff8fab", "#b385ff", "#ff9f4d"];
 
 export class Balloons {
   constructor() {
@@ -11,17 +11,19 @@ export class Balloons {
   onHold(dt, width, height) {
     this.spawnTimer -= dt;
     if (this.spawnTimer <= 0) {
-      this.spawnTimer = 0.18;
+      this.spawnTimer = 0.09;
       this.particles.push({
-        x: rand(width * 0.1, width * 0.9),
+        x: rand(width * 0.08, width * 0.92),
         y: height + 40,
-        vx: rand(-12, 12),
-        vy: rand(-70, -40),
-        r: rand(22, 34),
+        vy: -rand(160, 230),
+        r: rand(24, 40),
         color: pick(COLORS),
         sway: rand(0, Math.PI * 2),
+        swaySpeed: rand(1.6, 2.6),
+        swayAmp: rand(18, 34),
         life: 0,
-        maxLife: rand(5, 7)
+        maxLife: rand(4.5, 6),
+        popIn: 0
       });
     }
   }
@@ -29,28 +31,50 @@ export class Balloons {
   update(dt) {
     for (const p of this.particles) {
       p.life += dt;
-      p.sway += dt * 2;
-      p.x += Math.sin(p.sway) * 14 * dt + p.vx * dt * 0.1;
+      p.popIn = Math.min(1, p.popIn + dt * 4);
+      p.sway += dt * p.swaySpeed;
+      p.x += Math.sin(p.sway) * p.swayAmp * dt;
       p.y += p.vy * dt;
+      p.vy *= 0.995;
     }
     this.particles = this.particles.filter((p) => p.life < p.maxLife);
   }
 
   draw(ctx) {
     for (const p of this.particles) {
-      const alpha = Math.min(1, (p.maxLife - p.life) / 1.2);
+      const fadeOut = Math.min(1, (p.maxLife - p.life) / 1.0);
+      const scale = easeOutBack(p.popIn);
+      const alpha = Math.min(fadeOut, p.popIn < 1 ? p.popIn : 1);
+
       ctx.save();
-      ctx.globalAlpha = alpha;
-      ctx.fillStyle = p.color;
-      ctx.beginPath();
-      ctx.ellipse(p.x, p.y, p.r * 0.8, p.r, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = "rgba(255,255,255,0.35)";
+      ctx.globalAlpha = Math.max(0, alpha);
+      ctx.translate(p.x, p.y);
+      ctx.scale(scale, scale);
+
+      ctx.strokeStyle = "rgba(255,255,255,0.4)";
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(p.x, p.y + p.r);
-      ctx.lineTo(p.x, p.y + p.r + 24);
+      ctx.moveTo(0, p.r);
+      ctx.lineTo(0, p.r + 26);
       ctx.stroke();
+
+      const grad = ctx.createRadialGradient(-p.r * 0.3, -p.r * 0.35, p.r * 0.1, 0, 0, p.r * 1.1);
+      grad.addColorStop(0, "rgba(255,255,255,0.85)");
+      grad.addColorStop(0.25, p.color);
+      grad.addColorStop(1, p.color);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, p.r * 0.82, p.r, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(-p.r * 0.15, p.r * 0.95);
+      ctx.lineTo(0, p.r * 1.15);
+      ctx.lineTo(p.r * 0.15, p.r * 0.95);
+      ctx.closePath();
+      ctx.fillStyle = p.color;
+      ctx.fill();
+
       ctx.restore();
     }
   }
