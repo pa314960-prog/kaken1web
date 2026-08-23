@@ -27,8 +27,10 @@ Webカメラの映像から手のジェスチャーを認識し、ジェスチ�
 1. PowerShell（Windows）またはターミナル（Mac）を開く
 2. フォルダを置きたい場所に移動する（例: デスクトップ）
    ```
-   cd Desktop
+   cd $HOME\Desktop
    ```
+   - `cd : パス 'C:\WINDOWS\system32\Desktop' が存在しないため検出できません。` のようなエラーが出た場合、PowerShellが `C:\WINDOWS\system32` を起点に開いているためです（管理者権限で開いた場合など）。相対パスの `Desktop` ではなく上記の `$HOME\Desktop` を使ってください。
+   - それでも失敗する場合は `whoami` でユーザー名を確認し、`cd C:\Users\ユーザー名\Desktop` のように絶対パスで指定してください。
 3. 次のコマンドでクローンする
    ```
    git clone -b claude/hand-gesture-effects-glik5u https://github.com/pa314960-prog/kaken1web.git
