@@ -39,31 +39,32 @@ export class Lasers {
 
   draw(ctx, width, height) {
     ctx.save();
-    ctx.fillStyle = "rgba(6, 0, 16, 0.22)";
+    ctx.fillStyle = "rgba(20, 15, 30, 0.22)";
     ctx.fillRect(0, 0, width, height);
     ctx.restore();
 
     for (const b of this.beams) {
       const t = b.life / b.maxLife;
       const alpha = t < 0.15 ? t / 0.15 : 1 - (t - 0.15) / 0.85;
-      const color = `hsl(${b.hue}, 100%, 60%)`;
+      const color = `hsl(${b.hue}, 55%, 78%)`;
       const currentEx = b.x + (b.ex - b.x) * Math.min(1, t / b.sweep + 0.3);
       const currentEy = b.y + (b.ey - b.y) * Math.min(1, t / b.sweep + 0.3);
 
       ctx.save();
-      ctx.globalAlpha = Math.max(0, alpha) * 0.9;
-      ctx.shadowColor = color;
-      ctx.shadowBlur = 26;
+      ctx.globalAlpha = Math.max(0, alpha) * 0.55;
+      ctx.filter = "blur(6px)";
       ctx.strokeStyle = color;
-      ctx.lineWidth = b.width;
+      ctx.lineWidth = b.width * 2.6;
       ctx.lineCap = "round";
       ctx.beginPath();
       ctx.moveTo(b.x, b.y);
       ctx.lineTo(currentEx, currentEy);
       ctx.stroke();
 
-      ctx.globalAlpha = Math.max(0, alpha) * 0.5;
-      ctx.lineWidth = b.width * 2.4;
+      ctx.filter = "blur(1px)";
+      ctx.globalAlpha = Math.max(0, alpha) * 0.75;
+      ctx.strokeStyle = "rgba(255,255,255,0.6)";
+      ctx.lineWidth = b.width * 0.6;
       ctx.stroke();
       ctx.restore();
     }

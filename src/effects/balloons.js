@@ -1,6 +1,13 @@
 import { rand, pick, easeOutBack } from "./utils.js";
 
-const COLORS = ["#ff6b6b", "#ffd93d", "#6bcB77", "#4d96ff", "#ff8fab", "#b385ff", "#ff9f4d"];
+const COLORS = [
+  "rgba(255,140,150,0.5)",
+  "rgba(255,210,120,0.5)",
+  "rgba(140,220,190,0.5)",
+  "rgba(130,180,255,0.5)",
+  "rgba(255,170,210,0.5)",
+  "rgba(190,160,255,0.5)"
+];
 
 export class Balloons {
   constructor() {
@@ -51,20 +58,32 @@ export class Balloons {
       ctx.translate(p.x, p.y);
       ctx.scale(scale, scale);
 
-      ctx.strokeStyle = "rgba(255,255,255,0.4)";
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgba(255,255,255,0.35)";
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(0, p.r);
       ctx.lineTo(0, p.r + 26);
       ctx.stroke();
 
-      const grad = ctx.createRadialGradient(-p.r * 0.3, -p.r * 0.35, p.r * 0.1, 0, 0, p.r * 1.1);
-      grad.addColorStop(0, "rgba(255,255,255,0.85)");
-      grad.addColorStop(0.25, p.color);
-      grad.addColorStop(1, p.color);
-      ctx.fillStyle = grad;
+      ctx.filter = "blur(1.5px)";
+      ctx.fillStyle = p.color;
       ctx.beginPath();
       ctx.ellipse(0, 0, p.r * 0.82, p.r, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.filter = "none";
+
+      ctx.strokeStyle = "rgba(255,255,255,0.45)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, p.r * 0.82, p.r, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      const sheen = ctx.createRadialGradient(-p.r * 0.28, -p.r * 0.4, 0, -p.r * 0.28, -p.r * 0.4, p.r * 0.5);
+      sheen.addColorStop(0, "rgba(255,255,255,0.55)");
+      sheen.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = sheen;
+      ctx.beginPath();
+      ctx.ellipse(-p.r * 0.28, -p.r * 0.4, p.r * 0.35, p.r * 0.45, -0.4, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.beginPath();

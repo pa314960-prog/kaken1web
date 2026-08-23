@@ -1,6 +1,13 @@
 import { rand, pick } from "./utils.js";
 
-const COLORS = ["#ff595e", "#ffca3a", "#8ac926", "#1982c4", "#6a4c93", "#ff7ab6", "#00d0ff"];
+const COLORS = [
+  "rgba(255,140,148,0.55)",
+  "rgba(255,210,110,0.55)",
+  "rgba(160,220,140,0.55)",
+  "rgba(120,190,255,0.55)",
+  "rgba(200,160,255,0.55)",
+  "rgba(255,160,200,0.55)"
+];
 
 export class Confetti {
   constructor() {
@@ -55,12 +62,20 @@ export class Confetti {
   draw(ctx) {
     for (const p of this.particles) {
       const scaleX = Math.abs(Math.cos(p.flip));
+      const h = p.size * p.elongation;
       ctx.save();
       ctx.translate(p.x, p.y);
       ctx.rotate(p.rot);
       ctx.scale(scaleX, 1);
+      ctx.filter = "blur(0.6px)";
       ctx.fillStyle = p.color;
-      ctx.fillRect(-p.size / 2, (-p.size * p.elongation) / 2, p.size, p.size * p.elongation);
+      ctx.beginPath();
+      ctx.roundRect(-p.size / 2, -h / 2, p.size, h, p.size * 0.3);
+      ctx.fill();
+      ctx.filter = "none";
+      ctx.strokeStyle = "rgba(255,255,255,0.4)";
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
       ctx.restore();
     }
   }

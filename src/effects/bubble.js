@@ -31,20 +31,36 @@ export class ReactionBubble {
       ctx.scale(scale, scale);
 
       const w = 130, h = 80;
-      ctx.fillStyle = "#ffffff";
-      ctx.strokeStyle = this.color;
-      ctx.lineWidth = 4;
+
+      ctx.save();
+      ctx.filter = "blur(2px)";
+      ctx.fillStyle = "rgba(255,255,255,0.22)";
       roundRect(ctx, -w / 2, -h / 2, w, h, 20);
       ctx.fill();
-      ctx.stroke();
-
       ctx.beginPath();
       ctx.moveTo(-10, h / 2 - 2);
       ctx.lineTo(0, h / 2 + 20);
       ctx.lineTo(14, h / 2 - 2);
       ctx.closePath();
-      ctx.fillStyle = "#ffffff";
       ctx.fill();
+      ctx.restore();
+
+      roundRect(ctx, -w / 2, -h / 2, w, h, 20);
+      ctx.strokeStyle = "rgba(255,255,255,0.55)";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      const sheen = ctx.createLinearGradient(-w / 2, -h / 2, -w / 2, h * 0.1);
+      sheen.addColorStop(0, "rgba(255,255,255,0.35)");
+      sheen.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = sheen;
+      roundRect(ctx, -w / 2, -h / 2, w, h * 0.55, 20);
+      ctx.fill();
+
+      ctx.strokeStyle = this.color;
+      ctx.lineWidth = 2;
+      roundRect(ctx, -w / 2, -h / 2, w, h, 20);
+      ctx.stroke();
 
       ctx.font = "42px sans-serif";
       ctx.textAlign = "center";

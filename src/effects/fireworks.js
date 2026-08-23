@@ -1,6 +1,14 @@
 import { rand, pick } from "./utils.js";
 
-const COLORS = ["#ff5e5e", "#5ecbff", "#ffd25e", "#c15eff", "#5eff8f", "#ff5ec1", "#ffffff"];
+const COLORS = [
+  "rgba(255,140,140,0.85)",
+  "rgba(140,200,255,0.85)",
+  "rgba(255,215,140,0.85)",
+  "rgba(200,150,255,0.85)",
+  "rgba(150,230,190,0.85)",
+  "rgba(255,170,210,0.85)",
+  "rgba(255,255,255,0.85)"
+];
 
 export class Fireworks {
   constructor() {
@@ -78,9 +86,8 @@ export class Fireworks {
         ctx.fill();
       }
       ctx.globalAlpha = 1;
-      ctx.shadowColor = r.color;
-      ctx.shadowBlur = 12;
-      ctx.fillStyle = "#fff";
+      ctx.filter = "blur(2px)";
+      ctx.fillStyle = "rgba(255,255,255,0.9)";
       ctx.beginPath();
       ctx.arc(r.x, r.y, 3, 0, Math.PI * 2);
       ctx.fill();
@@ -89,14 +96,13 @@ export class Fireworks {
     for (const s of this.sparks) {
       const t = s.life / s.maxLife;
       const alpha = 1 - t;
-      const flicker = 0.7 + 0.3 * Math.sin(s.life * 40);
+      const flicker = 0.75 + 0.25 * Math.sin(s.life * 30);
       ctx.save();
       ctx.globalAlpha = Math.max(0, alpha) * flicker;
-      ctx.shadowColor = s.color;
-      ctx.shadowBlur = 10;
+      ctx.filter = "blur(1.5px)";
       ctx.fillStyle = s.color;
       ctx.beginPath();
-      ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+      ctx.arc(s.x, s.y, s.size * 1.6, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }

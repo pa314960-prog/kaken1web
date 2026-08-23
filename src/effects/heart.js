@@ -36,18 +36,26 @@ export class HeartEffect {
     this.camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
     this.camera.position.set(0, 0, 6);
 
-    const ambient = new THREE.AmbientLight(0xffffff, 0.6);
-    const key = new THREE.DirectionalLight(0xffffff, 1.2);
+    const ambient = new THREE.AmbientLight(0xffffff, 0.75);
+    const key = new THREE.DirectionalLight(0xffffff, 0.9);
     key.position.set(2, 3, 4);
-    this.scene.add(ambient, key);
+    const rim = new THREE.DirectionalLight(0xffe6ec, 0.5);
+    rim.position.set(-2, -1, 3);
+    this.scene.add(ambient, key, rim);
 
     this.geometry = buildHeartGeometry();
-    this.material = new THREE.MeshStandardMaterial({
-      color: 0xff1744,
-      metalness: 0.15,
-      roughness: 0.35,
-      emissive: 0x330008,
-      transparent: true
+    this.material = new THREE.MeshPhysicalMaterial({
+      color: 0xffb3c1,
+      roughness: 0.92,
+      metalness: 0,
+      clearcoat: 0.12,
+      clearcoatRoughness: 1,
+      sheen: 1,
+      sheenColor: 0xffffff,
+      sheenRoughness: 0.85,
+      emissive: 0x3a0010,
+      transparent: true,
+      opacity: 0.72
     });
 
     this.hearts = [];
@@ -107,9 +115,9 @@ export class HeartEffect {
       h.position.x += h.userData.driftX * dt + Math.sin(h.userData.life * 3 + h.userData.wobbleSeed) * 0.15 * dt;
       h.rotation.y = Math.sin(h.userData.life * 2 + h.userData.wobbleSeed) * 0.35;
       h.rotation.z = Math.sin(h.userData.life * 1.5 + h.userData.wobbleSeed) * 0.12;
-      h.material.opacity = t < 0.55 ? 1 : Math.max(0, 1 - (t - 0.55) / 0.45);
-      const pulse = 0.15 + Math.abs(Math.sin(h.userData.life * 6)) * 0.25;
-      h.material.emissive.setRGB(pulse, 0, pulse * 0.15);
+      h.material.opacity = t < 0.55 ? 0.72 : Math.max(0, 0.72 * (1 - (t - 0.55) / 0.45));
+      const pulse = 0.08 + Math.abs(Math.sin(h.userData.life * 4)) * 0.1;
+      h.material.emissive.setRGB(pulse, pulse * 0.1, pulse * 0.15);
     }
     this.hearts = this.hearts.filter((h) => {
       const alive = h.userData.life < h.userData.maxLife;

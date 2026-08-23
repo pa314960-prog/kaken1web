@@ -42,8 +42,9 @@ export class Rain {
 
   draw(ctx, width, height) {
     ctx.save();
-    ctx.strokeStyle = "rgba(190, 215, 255, 0.6)";
-    ctx.lineWidth = 2;
+    ctx.filter = "blur(0.5px)";
+    ctx.strokeStyle = "rgba(210, 225, 245, 0.4)";
+    ctx.lineWidth = 1.6;
     ctx.beginPath();
     for (const d of this.drops) {
       ctx.moveTo(d.x, d.y);
@@ -53,7 +54,8 @@ export class Rain {
     ctx.restore();
 
     ctx.save();
-    ctx.fillStyle = "rgba(45, 50, 65, 0.65)";
+    ctx.filter = "blur(6px)";
+    ctx.fillStyle = "rgba(210, 215, 230, 0.4)";
     for (let i = 0; i < 7; i++) {
       const cx = (width / 7) * i + Math.sin(i * 1.7) * 24;
       ctx.beginPath();
