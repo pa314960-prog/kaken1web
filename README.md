@@ -2,6 +2,12 @@
 
 Webカメラの映像から手のジェスチャーを認識し、ジェスチャーに応じて画面エフェクトを切り替えるブラウザアプリです。ビルド不要の静的ファイル（HTML / CSS / JS）のみで構成されており、CDN から [MediaPipe Hand Landmarker](https://developers.google.com/mediapipe) と [Three.js](https://threejs.org/) を読み込んで動作します。
 
+## 公開URL（GitHub Pages）
+
+https://pa314960-prog.github.io/kaken1web/
+
+ブラウザで上記URLを開き、「カメラを開始」ボタンをクリックしてカメラ使用を許可すれば利用できます（インストール不要）。
+
 ## 必要なもの
 
 - Google Chrome または Microsoft Edge（最新版を推奨）
