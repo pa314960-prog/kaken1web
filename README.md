@@ -1,6 +1,6 @@
 # Hand Gesture Effects
 
-Webカメラの映像から手のジェスチャーを認識し、ジェスチャーに応じて画面エフェクトを切り替えるブラウザアプリです。ビルド不要の静的ファイル（HTML / CSS / JS）のみで構成されており、CDN から [MediaPipe Hand Landmarker](https://developers.google.com/mediapipe) と [Three.js](https://threejs.org/) を読み込んで動作します。
+Webカメラの映像から手のジェスチャーを認識し、ジェスチャーに応じて画面エフェクトを切り替えるブラウザアプリです。ビルド不要の静的ファイル（HTML / CSS / JS）のみで構成されており、CDN から [MediaPipe Hand Landmarker](https://developers.google.com/mediapipe) を読み込んで動作します。
 
 ## 公開URL（GitHub Pages）
 
@@ -269,7 +269,7 @@ Git・Pythonのインストールと `git clone` は最初の1回だけで大丈
 
 | # | ジェスチャー | 条件 | エフェクト |
 |---|---|---|---|
-| 1 | ハート | 両手の親指同士・人差し指同士を近づけてハート形を作る | 手の間から赤い3Dハートが出現し、ゆっくり上昇しながら広がる |
+| 1 | ハート | 両手の親指同士・人差し指同士を近づけてハート形を作る | 手の間から赤いハートが次々と浮かび上がり、ふわふわ揺れながら上昇する |
 | 2 | ピース（片手） | 片手でピースサイン | 画面下からカラフルな風船が浮かび上がる |
 | 3 | ピース（両手） | 両手でピースサイン | 画面上から紙吹雪が降る |
 | 4 | グッド（片手） | 片手で親指を立てる | 「いいね」の吹き出しがふわっと浮かび上がる |
@@ -288,7 +288,7 @@ style.css                レイアウト・見た目
 src/main.js               カメラ初期化・検出ループ・ジェスチャー安定化
 src/handTracking.js       MediaPipeラッパーとジェスチャー分類ロジック
 src/effects/effectManager.js  現在のジェスチャーに応じてエフェクトを統括
-src/effects/heart.js          Three.js製 3Dハート
+src/effects/heart.js          浮かび上がるハート
 src/effects/balloons.js       風船
 src/effects/confetti.js       紙吹雪
 src/effects/fireworks.js      花火
@@ -302,7 +302,7 @@ src/effects/utils.js          乱数・イージングなどの共通ユーテ�
 
 基本的に**このフォルダをコピーするだけ**で動きます。以下は稀に調整が必要になるケースです。
 
-- **社内プロキシ等でCDNがブロックされる場合**: `src/handTracking.js` と `src/effects/heart.js` 冒頭の `https://cdn.jsdelivr.net/...` / `https://storage.googleapis.com/...` の参照を、社内ミラーや `node_modules` からのローカル配信に差し替える必要があります。
+- **社内プロキシ等でCDNがブロックされる場合**: `src/handTracking.js` 冒頭の `https://cdn.jsdelivr.net/...` / `https://storage.googleapis.com/...` の参照を、社内ミラーや `node_modules` からのローカル配信に差し替える必要があります。
 - **カメラが複数ある/内蔵カメラを使いたくない場合**: `src/main.js` の `getUserMedia` の `facingMode: "user"` を `deviceId` 指定に変更してください。
 - **GPUが無い/古い環境でWebGL初期化に失敗する場合**: `src/handTracking.js` の `delegate: "GPU"` を `"CPU"` に変更すると動きますが、検出は遅くなります。
 

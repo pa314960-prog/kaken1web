@@ -22,7 +22,7 @@ const GESTURE_LABELS = {
 
 const EFFECT_LABELS = {
   none: "-",
-  heart: "3Dハート",
+  heart: "ハート",
   peaceOne: "風船",
   peaceTwo: "紙吹雪",
   goodOne: "いいね吹き出し",
@@ -33,10 +33,10 @@ const EFFECT_LABELS = {
 };
 
 export class EffectManager {
-  constructor({ fxCanvas, threeCanvas }) {
+  constructor({ fxCanvas }) {
     this.fxCanvas = fxCanvas;
     this.ctx = fxCanvas.getContext("2d");
-    this.heart = new HeartEffect(threeCanvas);
+    this.heart = new HeartEffect();
 
     this.balloons = new Balloons();
     this.confetti = new Confetti();
@@ -60,7 +60,6 @@ export class EffectManager {
     const h = window.innerHeight;
     this.fxCanvas.width = w;
     this.fxCanvas.height = h;
-    this.heart.resize();
     this.width = w;
     this.height = h;
   }
@@ -86,7 +85,7 @@ export class EffectManager {
     if (g === "goodTwo") this.fireworks.onHold(dt, this.width, this.height);
     if (g === "badTwo") this.rain.onHold(dt, this.width, this.height);
     if (g === "rock") this.lasers.onHold(dt, this.width, this.height);
-    if (g === "heart") this.heart.onHold(dt, o.x, o.y);
+    if (g === "heart") this.heart.onHold(dt, o.x * this.width, o.y * this.height);
 
     const targetDim = DIM_GESTURES.has(g) ? (g === "goodTwo" ? 0.55 : 0.4) : 0;
     const dimRate = targetDim > this.dimAlpha ? 5 : 1.5;
@@ -120,9 +119,8 @@ export class EffectManager {
     }
     this.fireworks.draw(ctx);
     this.lasers.draw(ctx, this.width, this.height);
+    this.heart.draw(ctx);
     this.goodBubble.draw(ctx);
     this.badBubble.draw(ctx);
-
-    this.heart.render();
   }
 }

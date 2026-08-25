@@ -6,8 +6,7 @@ const startOverlay = document.getElementById("start-overlay");
 const startBtn = document.getElementById("start-btn");
 
 const effectManager = new EffectManager({
-  fxCanvas: document.getElementById("fx"),
-  threeCanvas: document.getElementById("three-layer")
+  fxCanvas: document.getElementById("fx")
 });
 
 const STABLE_FRAMES_REQUIRED = 4;

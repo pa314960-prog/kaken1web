@@ -5,11 +5,10 @@ export class ReactionBubble {
     this.emoji = emoji;
     this.color = color;
     this.items = [];
-    this.wasActive = false;
   }
 
   onEnter(x, y) {
-    this.items.push({ x, y, life: 0, maxLife: 1.8 });
+    this.items.push({ x, y, life: 0, maxLife: 1.8, driftX: 26 + Math.random() * 22 });
   }
 
   update(dt) {
@@ -20,63 +19,55 @@ export class ReactionBubble {
   draw(ctx) {
     for (const it of this.items) {
       const t = it.life / it.maxLife;
-      const rise = t * 100;
+      const rise = t * 120;
       const alpha = t < 0.12 ? t / 0.12 : 1 - (t - 0.12) / 0.88;
       const popT = Math.min(1, t / 0.28);
-      const scale = t < 0.28 ? easeOutBack(popT) : 1 + (t - 0.28) * 0.06;
+      const scale = t < 0.28 ? easeOutBack(popT) : 1 + (t - 0.28) * 0.04;
+      const r = 46;
 
       ctx.save();
       ctx.globalAlpha = Math.max(0, alpha);
-      ctx.translate(it.x, it.y - rise);
+      ctx.translate(it.x + it.driftX * t, it.y - rise);
       ctx.scale(scale, scale);
 
-      const w = 130, h = 80;
-
       ctx.save();
-      ctx.filter = "blur(2px)";
+      ctx.filter = "blur(3px)";
       ctx.fillStyle = "rgba(255,255,255,0.22)";
-      roundRect(ctx, -w / 2, -h / 2, w, h, 20);
-      ctx.fill();
       ctx.beginPath();
-      ctx.moveTo(-10, h / 2 - 2);
-      ctx.lineTo(0, h / 2 + 20);
-      ctx.lineTo(14, h / 2 - 2);
-      ctx.closePath();
+      ctx.arc(0, 0, r, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
 
-      roundRect(ctx, -w / 2, -h / 2, w, h, 20);
-      ctx.strokeStyle = "rgba(255,255,255,0.55)";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      const sheen = ctx.createLinearGradient(-w / 2, -h / 2, -w / 2, h * 0.1);
-      sheen.addColorStop(0, "rgba(255,255,255,0.35)");
-      sheen.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = sheen;
-      roundRect(ctx, -w / 2, -h / 2, w, h * 0.55, 20);
+      const body = ctx.createRadialGradient(-r * 0.3, -r * 0.35, r * 0.1, 0, 0, r);
+      body.addColorStop(0, "rgba(255,255,255,0.5)");
+      body.addColorStop(0.55, "rgba(255,255,255,0.16)");
+      body.addColorStop(1, "rgba(255,255,255,0.08)");
+      ctx.fillStyle = body;
+      ctx.beginPath();
+      ctx.arc(0, 0, r, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.strokeStyle = this.color;
+      ctx.globalAlpha = Math.max(0, alpha) * 0.75;
       ctx.lineWidth = 2;
-      roundRect(ctx, -w / 2, -h / 2, w, h, 20);
+      ctx.beginPath();
+      ctx.arc(0, 0, r, 0, Math.PI * 2);
       ctx.stroke();
 
-      ctx.font = "42px sans-serif";
+      const sheen = ctx.createRadialGradient(-r * 0.35, -r * 0.4, 0, -r * 0.35, -r * 0.4, r * 0.5);
+      sheen.addColorStop(0, "rgba(255,255,255,0.8)");
+      sheen.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = sheen;
+      ctx.beginPath();
+      ctx.arc(-r * 0.35, -r * 0.4, r * 0.4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.globalAlpha = Math.max(0, alpha);
+      ctx.font = "44px sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(this.emoji, 0, -4);
+      ctx.fillText(this.emoji, 0, 2);
       ctx.restore();
     }
   }
-}
-
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
 }
